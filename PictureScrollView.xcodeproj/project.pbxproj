@@ -14,6 +14,9 @@
 		08C14ADC1E1F8F4900B6B3BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08C14ADB1E1F8F4900B6B3BB /* Assets.xcassets */; };
 		08C14ADF1E1F8F4900B6B3BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08C14ADD1E1F8F4900B6B3BB /* LaunchScreen.storyboard */; };
 		08C14AEA1E1F8F4900B6B3BB /* PictureScrollViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C14AE91E1F8F4900B6B3BB /* PictureScrollViewTests.m */; };
+		08C14AFB1E1F8FC800B6B3BB /* HLHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C14AFA1E1F8FC800B6B3BB /* HLHttpClient.m */; };
+		08C14AFF1E1F8FFC00B6B3BB /* HLPictureScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C14AFE1E1F8FFC00B6B3BB /* HLPictureScrollView.m */; };
+		08C14B021E1F91BB00B6B3BB /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C14B011E1F91BB00B6B3BB /* UIView+Extension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +43,12 @@
 		08C14AE51E1F8F4900B6B3BB /* PictureScrollViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PictureScrollViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08C14AE91E1F8F4900B6B3BB /* PictureScrollViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PictureScrollViewTests.m; sourceTree = "<group>"; };
 		08C14AEB1E1F8F4900B6B3BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08C14AF91E1F8FC800B6B3BB /* HLHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HLHttpClient.h; sourceTree = "<group>"; };
+		08C14AFA1E1F8FC800B6B3BB /* HLHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLHttpClient.m; sourceTree = "<group>"; };
+		08C14AFD1E1F8FFC00B6B3BB /* HLPictureScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HLPictureScrollView.h; sourceTree = "<group>"; };
+		08C14AFE1E1F8FFC00B6B3BB /* HLPictureScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLPictureScrollView.m; sourceTree = "<group>"; };
+		08C14B001E1F91BB00B6B3BB /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
+		08C14B011E1F91BB00B6B3BB /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +90,8 @@
 		08C14ACE1E1F8F4900B6B3BB /* PictureScrollView */ = {
 			isa = PBXGroup;
 			children = (
+				08C14AFC1E1F8FFC00B6B3BB /* Classes */,
+				08C14AF81E1F8FBC00B6B3BB /* Tools */,
 				08C14AD21E1F8F4900B6B3BB /* AppDelegate.h */,
 				08C14AD31E1F8F4900B6B3BB /* AppDelegate.m */,
 				08C14AD51E1F8F4900B6B3BB /* ViewController.h */,
@@ -109,6 +120,26 @@
 				08C14AEB1E1F8F4900B6B3BB /* Info.plist */,
 			);
 			path = PictureScrollViewTests;
+			sourceTree = "<group>";
+		};
+		08C14AF81E1F8FBC00B6B3BB /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				08C14B001E1F91BB00B6B3BB /* UIView+Extension.h */,
+				08C14B011E1F91BB00B6B3BB /* UIView+Extension.m */,
+				08C14AF91E1F8FC800B6B3BB /* HLHttpClient.h */,
+				08C14AFA1E1F8FC800B6B3BB /* HLHttpClient.m */,
+			);
+			name = Tools;
+			sourceTree = "<group>";
+		};
+		08C14AFC1E1F8FFC00B6B3BB /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				08C14AFD1E1F8FFC00B6B3BB /* HLPictureScrollView.h */,
+				08C14AFE1E1F8FFC00B6B3BB /* HLPictureScrollView.m */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,7 +246,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08C14B021E1F91BB00B6B3BB /* UIView+Extension.m in Sources */,
+				08C14AFF1E1F8FFC00B6B3BB /* HLPictureScrollView.m in Sources */,
 				08C14AD71E1F8F4900B6B3BB /* ViewController.m in Sources */,
+				08C14AFB1E1F8FC800B6B3BB /* HLHttpClient.m in Sources */,
 				08C14AD41E1F8F4900B6B3BB /* AppDelegate.m in Sources */,
 				08C14AD11E1F8F4900B6B3BB /* main.m in Sources */,
 			);
