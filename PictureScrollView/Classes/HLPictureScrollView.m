@@ -9,6 +9,7 @@
 #import "HLPictureScrollView.h"
 #import "UIImageView+WebCache.h"
 #import "PureLayout.h"
+#import "UIView+Extension.h"
 
 
 typedef NS_ENUM(NSInteger, SectionButtonIndex) {
@@ -23,6 +24,9 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
 @property (nonatomic , weak) UIPageControl *pageControl;
 @property (nonatomic , assign) int currentPageIndex;
 @property (nonatomic, weak) UIView *containView;
+@property (nonatomic , strong) NSLayoutConstraint *contentWidthConstraint;
+
+@property (nonatomic, assign) int imageViewContentModel;
 @end
 
 @implementation HLPictureScrollView
@@ -46,80 +50,35 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
     return self;
 }
 
--(void)refreshWithImagesURLStr:(NSArray *)imageAddress
+-(void)refreshWithImagesURLStr:(NSArray *)imagesUrl
 {
-    self.pageCount = imageAddress.count;
-    self.scrollView.userInteractionEnabled = YES;
-    self.scrollView.delegate = self;
-    self.scrollView.pagingEnabled = YES;
-    self.scrollView.showsHorizontalScrollIndicator = NO;
     
-    [self.scrollView autoPinEdgesToSuperviewEdges];
-    self.scrollView.backgroundColor = [UIColor greenColor];
-    
-    NSMutableArray *imageViewsM = [NSMutableArray arrayWithCapacity:imageAddress.count];
-    if (imageAddress.count) {
-        for (int i = 0; i < imageAddress.count; i++) {
-            UIImageView *imageView = [UIImageView newAutoLayoutView];
-            imageView.contentMode = UIViewContentModeCenter;
-            [imageView sd_setImageWithURL:[NSURL URLWithString:imageAddress[i]] placeholderImage:[UIImage imageNamed:@"piano1"] options:SDWebImageAllowInvalidSSLCertificates];
-
-            [self.scrollView addSubview:imageView];
-            [imageViewsM addObject:imageView];
-//            [imageView autoPinEdgesToSuperviewEdges];
-        }
-        
-        [imageViewsM autoDistributeViewsAlongAxis:ALAxisHorizontal alignedTo:ALAttributeHorizontal withFixedSpacing:0 insetSpacing:0 matchedSizes:YES];
-        [imageViewsM[0] autoPinEdge:ALEdgeLeft toEdge:ALEdgeLeft ofView:self.containView withOffset:0];
-        [imageViewsM[0] autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:self.containView];
-        [imageViewsM[0] autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.containView];
-        
-//        [imageViewsM autoAlignViewsToEdge:ALEdgeTop];
-//        [imageViewsM autoAlignViewsToEdge:ALEdgeBottom];
-        
+    if (imagesUrl.count <= 0) {
+        NSLog(@"emtpy imagesUrl.count");
+        return;
     }
     
-    self.pageControl.numberOfPages = imageAddress.count;
-    self.pageControl.hidesForSinglePage = YES;
-    self.pageControl.pageIndicatorTintColor = [UIColor blueColor];
-    CGSize pagesSize = [self.pageControl sizeForNumberOfPages:imageAddress.count];
-    [self.pageControl autoSetDimension:ALDimensionHeight toSize:pagesSize.height];
-    [self.pageControl autoSetDimension:ALDimensionWidth toSize:pagesSize.width];
-    [self.pageControl autoAlignAxisToSuperviewAxis:ALAxisVertical];
-    [self.pageControl autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self withOffset:10.0];
-//    self.pageControl.frame = CGRectMake((viewW - pagesSize.width)/2, viewH - pagesSize.height, pagesSize.width, pagesSize.height);
-}
-
-
-+(instancetype)viewWithFrame:(CGRect)frame andImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode
-{
-    CGFloat viewH = frame.size.height;
-//    CGFloat viewW = frame.size.width;
+    NSArray *subviews = self.containView.subviews;
+    for (UIView *view in subviews) {
+        [view removeFromSuperview];
+    }
     
-    HLPictureScrollView *sectionHeader  = [[HLPictureScrollView alloc] initWithFrame:frame];
-    [sectionHeader configureForAutoLayout];
-    
-    sectionHeader.pageCount = imagesUrl.count;
-    sectionHeader.scrollView.userInteractionEnabled = YES;
-    sectionHeader.scrollView.delegate = sectionHeader;
-    sectionHeader.scrollView.pagingEnabled = YES;
-    sectionHeader.scrollView.showsHorizontalScrollIndicator = NO;
-    
-    
+    self.pageCount = imagesUrl.count;
     if (imagesUrl.count) {
         // set containView size to scrollview.contentsize
-        [sectionHeader.containView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:sectionHeader.scrollView withMultiplier:imagesUrl.count];
+        [self.contentWidthConstraint autoRemove];
+        self.contentWidthConstraint = [self.containView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:self.scrollView withMultiplier:imagesUrl.count];
         UIImageView *preImageView = nil;
         for (int i = 0; i < imagesUrl.count; i++) {
             UIImageView *imageView = [UIImageView newAutoLayoutView];
             [imageView sd_setImageWithURL:imagesUrl[i] placeholderImage:[UIImage imageNamed:@"piano1"] options:SDWebImageAllowInvalidSSLCertificates];
-            imageView.contentMode = contentMode;
+            imageView.contentMode = self.imageViewContentModel;
             imageView.userInteractionEnabled = YES;
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:sectionHeader action:@selector(imageViewDidTaped:)];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageViewDidTaped:)];
             [imageView addGestureRecognizer:tap];
-            [sectionHeader.containView addSubview:imageView];
-            [imageView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:sectionHeader.scrollView];
-            [imageView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:sectionHeader.scrollView];
+            [self.containView addSubview:imageView];
+            [imageView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:self.scrollView];
+            [imageView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:self.scrollView];
             [imageView autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
             if (!preImageView) {
                 [imageView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
@@ -130,38 +89,103 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
             preImageView = imageView;
         }
         
-        [sectionHeader.containView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:sectionHeader.scrollView];
-        [sectionHeader.containView autoPinEdge:ALEdgeTop  toEdge:ALEdgeTop  ofView:sectionHeader.scrollView];
-        [sectionHeader.containView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:sectionHeader.scrollView];
-        [sectionHeader.containView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:sectionHeader.scrollView];
-        [sectionHeader.containView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:sectionHeader.scrollView];
+        [self.containView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.scrollView];
+        [self.containView autoPinEdge:ALEdgeTop  toEdge:ALEdgeTop  ofView:self.scrollView];
+        [self.containView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:self.scrollView];
+        [self.containView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self.scrollView];
+        [self.containView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:self.scrollView];
     }
     
-    sectionHeader.pageControl.numberOfPages = imagesUrl.count;
-    sectionHeader.pageControl.hidesForSinglePage = YES;
-    CGSize pagesSize = [sectionHeader.pageControl sizeForNumberOfPages:imagesUrl.count];
-    [sectionHeader.pageControl autoSetDimensionsToSize:pagesSize];
-    [sectionHeader.pageControl autoAlignAxis:ALAxisVertical toSameAxisOfView:sectionHeader];
-    [sectionHeader.pageControl autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:sectionHeader withOffset:10];
+    self.pageControl.numberOfPages = imagesUrl.count;
+    self.pageControl.hidesForSinglePage = YES;
+    CGSize pagesSize = [self.pageControl sizeForNumberOfPages:imagesUrl.count];
+    [self.pageControl autoSetDimensionsToSize:pagesSize];
+    [self.pageControl autoAlignAxis:ALAxisVertical toSameAxisOfView:self];
+    [self.pageControl autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self withOffset:10];
     
     
-    [sectionHeader.scrollView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:sectionHeader];
-    [sectionHeader.scrollView autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:sectionHeader];
-    [sectionHeader.scrollView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:sectionHeader];
-    [sectionHeader.scrollView autoSetDimension:ALDimensionHeight toSize:viewH];
+    [self.scrollView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:self];
+    [self.scrollView autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:self];
+    [self.scrollView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self];
+    [self.scrollView autoSetDimension:ALDimensionHeight toSize:self.containView.height];
+}
+
+
++(instancetype)viewWithFrame:(CGRect)frame andImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode
+{
     
-    return sectionHeader;
+    NSAssert(imagesUrl.count, @"empty imagesUrls");
+    
+    CGFloat viewH = frame.size.height;
+//    CGFloat viewW = frame.size.width;
+    
+    HLPictureScrollView *pictureSV  = [[HLPictureScrollView alloc] initWithFrame:frame];
+    [pictureSV configureForAutoLayout];
+    
+    pictureSV.pageCount = imagesUrl.count;
+    pictureSV.scrollView.userInteractionEnabled = YES;
+    pictureSV.scrollView.delegate = pictureSV;
+    pictureSV.scrollView.pagingEnabled = YES;
+    pictureSV.scrollView.showsHorizontalScrollIndicator = NO;
+    pictureSV.imageViewContentModel = contentMode;
+    
+    if (imagesUrl.count) {
+        // set containView size to scrollview.contentsize
+        [pictureSV.contentWidthConstraint autoRemove];
+        pictureSV.contentWidthConstraint = [pictureSV.containView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:pictureSV.scrollView withMultiplier:imagesUrl.count];
+        UIImageView *preImageView = nil;
+        for (int i = 0; i < imagesUrl.count; i++) {
+            UIImageView *imageView = [UIImageView newAutoLayoutView];
+            [imageView sd_setImageWithURL:imagesUrl[i] placeholderImage:[UIImage imageNamed:@"piano1"] options:SDWebImageAllowInvalidSSLCertificates];
+            imageView.contentMode = contentMode;
+            imageView.userInteractionEnabled = YES;
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:pictureSV action:@selector(imageViewDidTaped:)];
+            [imageView addGestureRecognizer:tap];
+            [pictureSV.containView addSubview:imageView];
+            [imageView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:pictureSV.scrollView];
+            [imageView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:pictureSV.scrollView];
+            [imageView autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
+            if (!preImageView) {
+                [imageView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+            }else {
+                [imageView autoConstrainAttribute:ALAttributeLeading toAttribute:ALAttributeTrailing ofView:preImageView];
+            }
+            
+            preImageView = imageView;
+        }
+        
+        [pictureSV.containView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:pictureSV.scrollView];
+        [pictureSV.containView autoPinEdge:ALEdgeTop  toEdge:ALEdgeTop  ofView:pictureSV.scrollView];
+        [pictureSV.containView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:pictureSV.scrollView];
+        [pictureSV.containView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:pictureSV.scrollView];
+        [pictureSV.containView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:pictureSV.scrollView];
+    }
+    
+    pictureSV.pageControl.numberOfPages = imagesUrl.count;
+    pictureSV.pageControl.hidesForSinglePage = YES;
+    CGSize pagesSize = [pictureSV.pageControl sizeForNumberOfPages:imagesUrl.count];
+    [pictureSV.pageControl autoSetDimensionsToSize:pagesSize];
+    [pictureSV.pageControl autoAlignAxis:ALAxisVertical toSameAxisOfView:pictureSV];
+    [pictureSV.pageControl autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:pictureSV withOffset:10];
+    
+    
+    [pictureSV.scrollView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:pictureSV];
+    [pictureSV.scrollView autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:pictureSV];
+    [pictureSV.scrollView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:pictureSV];
+    [pictureSV.scrollView autoSetDimension:ALDimensionHeight toSize:viewH];
+    
+    return pictureSV;
 }
 
 #pragma mark - UIScrollView delegate
 
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+//-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
 //    CGFloat pageWidth = scrollView.frame.size.width;
 //    int userPanOffset = ((int)scrollView.contentOffset.x) % ((int)pageWidth/2);
 //    CGFloat alpha = userPanOffset / (CGFloat)(pageWidth/2);
 //    HLLog(@" userPanOffset %d", userPanOffset);
-}
+//}
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
