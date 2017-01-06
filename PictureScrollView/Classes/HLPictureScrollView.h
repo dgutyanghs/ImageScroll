@@ -18,11 +18,9 @@
 typedef void(^actionBlock)(NSNumber *index);
 
 @interface HLPictureScrollView : UIView <UIScrollViewDelegate>
-@property (weak, nonatomic)  UIScrollView *scrollView;
 @property (assign, nonatomic) id <HLPictureScrollViewDelegte> delegate;
 
 @property (copy,   nonatomic) actionBlock callBackBlock;
-@property (assign, nonatomic) NSInteger pageCount;
 
 -(void)refreshWithImagesURLStr:(NSArray *)imageAddress;
 +(instancetype)viewWithFrame:(CGRect)frame andImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode;

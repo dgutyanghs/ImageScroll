@@ -8,6 +8,7 @@
 
 #import "HLPictureScrollView.h"
 #import "UIImageView+WebCache.h"
+#import "PureLayout.h"
 
 
 typedef NS_ENUM(NSInteger, SectionButtonIndex) {
@@ -16,6 +17,9 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
 };
 
 @interface HLPictureScrollView ()
+@property (assign, nonatomic) NSInteger pageCount;
+@property (weak, nonatomic)  UIScrollView *scrollView;
+
 @property (nonatomic , weak) UIPageControl *pageControl;
 @property (nonatomic , assign) int currentPageIndex;
 @property (nonatomic, weak) UIView *containView;
