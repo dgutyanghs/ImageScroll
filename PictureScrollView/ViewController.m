@@ -8,8 +8,11 @@
 
 #import "ViewController.h"
 #import "HLPictureScrollView.h"
-#import "UIView+Extension.h"
 #import "PureLayout.h"
+
+
+#define SCREEN_WIDTH   ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT  ([UIScreen mainScreen].bounds.size.height)
 
 @interface ViewController () <HLPictureScrollViewDelegte>
 @property (weak, nonatomic) IBOutlet UILabel *tapLabel;
@@ -50,12 +53,20 @@
 
 -(void)loadPianosPictures:(NSMutableArray *)imagesUrls  {
     
-    CGRect slideFrame = CGRectMake(0, 0, self.containView.width, self.containView.height);
-    _slideView = [HLPictureScrollView viewWithFrame:slideFrame andImagesUrl:imagesUrls viewDisplayMode: UIViewContentModeScaleToFill];
+    _slideView = [HLPictureScrollView viewWithImagesUrl:imagesUrls viewDisplayMode: UIViewContentModeScaleToFill];
     _slideView.delegate = self;
     [self.containView addSubview:_slideView];
+#pragma mark - 更改图片大小,位置
+  //1.图片占满父窗口 (his super view)
+//    [_slideView autoPinEdgesToSuperviewEdges];
     
-    [_slideView autoPinEdgesToSuperviewEdges];
+  //2.图片与父窗口留空白 (his super view)
+    [_slideView autoPinEdgesToSuperviewMargins];
+
+//  3.自定义图片大小,位置
+//    CGRect slideFrame = CGRectMake(15, 10, 230, 480);
+//    [_slideView autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(slideFrame.origin.y, slideFrame.origin.x, SCREEN_HEIGHT - slideFrame.size.height, SCREEN_WIDTH - slideFrame.size.width)];
+    
     [self.slideView setNeedsDisplay];
 }
 

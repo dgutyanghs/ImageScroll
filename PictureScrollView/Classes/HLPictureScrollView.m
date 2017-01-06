@@ -111,16 +111,11 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
 }
 
 
-+(instancetype)viewWithFrame:(CGRect)frame andImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode
++(instancetype)viewWithImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode
 {
-    
     NSAssert(imagesUrl.count, @"empty imagesUrls");
     
-    CGFloat viewH = frame.size.height;
-//    CGFloat viewW = frame.size.width;
-    
-    HLPictureScrollView *pictureSV  = [[HLPictureScrollView alloc] initWithFrame:frame];
-    [pictureSV configureForAutoLayout];
+    HLPictureScrollView *pictureSV  = [HLPictureScrollView newAutoLayoutView];
     
     pictureSV.pageCount = imagesUrl.count;
     pictureSV.scrollView.userInteractionEnabled = YES;
@@ -169,14 +164,11 @@ typedef NS_ENUM(NSInteger, SectionButtonIndex) {
     [pictureSV.pageControl autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:pictureSV withOffset:10];
     
     
-    [pictureSV.scrollView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:pictureSV];
-    [pictureSV.scrollView autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:pictureSV];
-    [pictureSV.scrollView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:pictureSV];
-    [pictureSV.scrollView autoSetDimension:ALDimensionHeight toSize:viewH];
+    
+    [pictureSV.scrollView autoPinEdgesToSuperviewEdges];
     
     return pictureSV;
 }
-
 #pragma mark - UIScrollView delegate
 
 //-(void)scrollViewDidScroll:(UIScrollView *)scrollView

@@ -19,9 +19,8 @@ typedef void(^actionBlock)(NSNumber *index);
 
 @interface HLPictureScrollView : UIView <UIScrollViewDelegate>
 @property (assign, nonatomic) id <HLPictureScrollViewDelegte> delegate;
-
 @property (copy,   nonatomic) actionBlock callBackBlock;
 
--(void)refreshWithImagesURLStr:(NSArray *)imageAddress;
-+(instancetype)viewWithFrame:(CGRect)frame andImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode;
++(instancetype)viewWithImagesUrl:(NSArray *)imagesUrl viewDisplayMode:(UIViewContentMode)contentMode;
+-(void)refreshWithImagesURLStr:(NSArray *)imagesUrl;
 @end
